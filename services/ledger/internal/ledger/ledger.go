@@ -46,8 +46,8 @@ func (r TransferRequest) Validate() error {
 		return fmt.Errorf("%w: amount must be positive", ErrInvalidArgument)
 	case r.FromAccountID == r.ToAccountID:
 		return fmt.Errorf("%w: cannot transfer to the same account", ErrInvalidArgument)
-	case !ValidateCurrency(r.Currency):
-		return fmt.Errorf("%w: invalid currency %q", ErrInvalidArgument, r.Currency)
+	case r.Currency == "":
+		return fmt.Errorf("%w: currency is required", ErrInvalidArgument)
 	}
 	return nil
 }
@@ -61,17 +61,4 @@ func CheckTransfer(from Account, to Account, amount int64, currency string) erro
 		return ErrInsufficientFunds
 	}
 	return nil
-}
-
-// Пока что топорная проверка что валюта из 3х заглавных символов английского алфавита
-func ValidateCurrency(c string) bool {
-	if len(c) != 3 {
-		return false
-	}
-	for _, ch := range c {
-		if ch < 'A' || ch > 'Z' {
-			return false
-		}
-	}
-	return true
 }

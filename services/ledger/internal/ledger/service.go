@@ -2,7 +2,6 @@ package ledger
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -22,9 +21,6 @@ func NewSerivce(store Store) *Service {
 }
 
 func (s *Service) CreateAccount(ctx context.Context, currency string, allowNegative bool) (Account, error) {
-	if !ValidateCurrency(currency) {
-		return Account{}, fmt.Errorf("%w: invalid currency %q", ErrInvalidArgument, currency)
-	}
 	return s.store.CreateAccount(ctx, currency, allowNegative)
 }
 

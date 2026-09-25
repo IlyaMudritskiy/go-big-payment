@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/IlyaMudritskiy/go-big-payment/services/ledger/internal/ledger"
@@ -22,7 +23,6 @@ func NewStore(pool *pgxpool.Pool) *Store {
 
 func (s *Store) CreateAccount(ctx context.Context, currency string, allowNegative bool) (ledger.Account, error) {
 	var a ledger.Account
-
 	err := s.pool.QueryRow(ctx, `
 		INSERT INTO accounts (currency, allow_negative)
 		VALUES ($1, $2)
@@ -30,6 +30,10 @@ func (s *Store) CreateAccount(ctx context.Context, currency string, allowNegativ
 		currency, allowNegative,
 	).Scan(&a.ID, &a.Currency, &a.Balance, &a.AllowNegative, &a.CreatedAt)
 
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.ConstraintName == "accounts_currency_fkey" {
+		return ledger.Account{}, fmt.Errorf("%w: unsupported currency %q", ledger.ErrInvalidArgument, currency)
+	}
 	if err != nil {
 		return ledger.Account{}, fmt.Errorf("insert account: %w", err)
 	}

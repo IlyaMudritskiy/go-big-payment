@@ -25,7 +25,7 @@ func TestCheckTransfer(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := CheckTransfer(tt.from, to, tt.amount, "RUB")
 			if !errors.Is(err, tt.wantErr) {
-				t.Error("CheckTransfer() error = %w, want %w", err, tt.wantErr)
+				t.Errorf("CheckTransfer() error = %v, want %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -47,7 +47,6 @@ func TestValidate(t *testing.T) {
 				FromAccountID:  uuidFrom,
 				ToAccountID:    uuidTo,
 				Amount:         10000,
-				Currency:       "RUB",
 				Description:    "",
 			},
 			ErrInvalidArgument,
@@ -59,7 +58,6 @@ func TestValidate(t *testing.T) {
 				FromAccountID:  uuidFrom,
 				ToAccountID:    uuidTo,
 				Amount:         0,
-				Currency:       "RUB",
 				Description:    "",
 			},
 			ErrInvalidArgument,
@@ -71,7 +69,6 @@ func TestValidate(t *testing.T) {
 				FromAccountID:  uuidFrom,
 				ToAccountID:    uuidTo,
 				Amount:         -10000,
-				Currency:       "RUB",
 				Description:    "",
 			},
 			ErrInvalidArgument,
@@ -83,7 +80,6 @@ func TestValidate(t *testing.T) {
 				FromAccountID:  uuidFrom,
 				ToAccountID:    uuidFrom,
 				Amount:         10000,
-				Currency:       "RUB",
 				Description:    "",
 			},
 			ErrInvalidArgument,
@@ -95,7 +91,6 @@ func TestValidate(t *testing.T) {
 				FromAccountID:  uuidFrom,
 				ToAccountID:    uuidTo,
 				Amount:         10000,
-				Currency:       "1xB",
 				Description:    "",
 			},
 			ErrInvalidArgument,
@@ -106,7 +101,7 @@ func TestValidate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.tr.Validate()
 			if !errors.Is(err, tt.wantErr) {
-				t.Error("TransferRequest.Validate() error = %w, want %w", err, tt.wantErr)
+				t.Errorf("TransferRequest.Validate() error = %v, want %v", err, tt.wantErr)
 			}
 		})
 	}

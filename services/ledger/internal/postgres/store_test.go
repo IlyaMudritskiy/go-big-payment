@@ -51,6 +51,15 @@ func mustCreateAcoount(t *testing.T, s *Store, allowNegative bool) ledger.Accoun
 	return a
 }
 
+func TestCreateAccount_UnsupportedCurrency(t *testing.T) {
+	s := newTestStore(t)
+
+	_, err := s.CreateAccount(t.Context(), "XXX", false)
+	if !errors.Is(err, ledger.ErrInvalidArgument) {
+		t.Fatalf("error = %v, want ErrInvalidArgument", err)
+	}
+}
+
 func TestTransfer_Concurrent(t *testing.T) {
 	s := newTestStore(t)
 	ctx := t.Context()
@@ -170,4 +179,3 @@ func TestTransfer_Idempotent(t *testing.T) {
 		t.Errorf("balance = %d, want %d — деньги зачислены больше одного раза", got.Balance, req.Amount)
 	}
 }
-
