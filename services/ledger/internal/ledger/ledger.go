@@ -63,6 +63,7 @@ func CheckTransfer(from Account, to Account, amount int64, currency string) erro
 	return nil
 }
 
+// Пока что топорная проверка что валюта из 3х заглавных символов английского алфавита
 func ValidateCurrency(c string) bool {
 	if len(c) != 3 {
 		return false
