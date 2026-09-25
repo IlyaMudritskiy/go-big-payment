@@ -1,13 +1,16 @@
 -include .env
 export
 
-.PHONY: run-ledger test lint migrate-up migrate-down migrate-status
+.PHONY: run-ledger test test-v lint migrate-up migrate-down migrate-status
 
 run-ledger:
 	go run ./services/ledger/cmd/ledger
 
 test:
-	go test -v -race ./...
+	go test -race ./...
+
+test-v:
+	go test -v -race ./..
 
 lint:
 	golangci-lint run ./...
